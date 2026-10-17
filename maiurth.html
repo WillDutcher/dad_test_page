@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAIURTH: An Introduction</title>
+<!-- Fonts: typewriter for files and labels, a bookish serif for the story, a carved capital for the title.
+     If there is no internet, the page falls back to Courier and Georgia and still looks right. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night:   #0d0b09;   /* deep background */
+    --paper:   #e9dfc8;   /* story text, aged paper */
+    --amber:   #e0a44a;   /* teletype and labels */
+    --rust:    #a3402a;   /* CLASSIFIED stamp red */
+    --glow:    #8fe3f0;   /* MAIURTH crystal light */
+    --muted:   #9b8f7a;
+    --voice:   #d7c9ff;   /* spoken dialogue */
+    --rule:    rgba(224,164,74,.3);   /* chapter rules */
+    --card:    #e6dcc3;   /* personnel file paper */
+    --card-shadow: 0 6px 18px rgba(0,0,0,.5);
+    --grain:   .07;
+    --btn-bg:  rgba(13,11,9,.72);
+    --btn-line: rgba(224,164,74,.5);
+    --type:   "Special Elite", "Courier New", Courier, monospace;
+    --serif:   "Libre Baskerville", Georgia, "Times New Roman", serif;
+    --title:   "Cinzel", "Trajan Pro", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--night); color: var(--paper); font-family: var(--serif);
+         font-size: 18px; line-height: 1.8; -webkit-font-smoothing: antialiased; }
+
+  /* film grain over everything, for a 1970s print feel */
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: var(--grain); z-index: 50;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* ---------- OPENING SCENE ---------- */
+  .hero { position: relative; height: 100vh; min-height: 560px; overflow: hidden; background: #050404; }
+  .hero svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 2.5s ease; }
+  .hero.s2 svg { opacity: 1; }
+
+  .teletype { position: absolute; top: 9vh; left: 0; right: 0; text-align: center; z-index: 3;
+              font-family: var(--type); color: var(--amber); letter-spacing: .14em; font-size: clamp(.8rem, 2.6vw, 1.05rem);
+              transition: opacity 1.5s ease; }
+  .teletype div { min-height: 1.6em; }
+  .teletype .cursor { display: inline-block; width: .6em; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .hero.s3 .teletype { opacity: .35; }
+
+  .stamp { position: absolute; top: 20vh; right: 7vw; z-index: 3; font-family: var(--type); color: var(--rust);
+           border: 3px solid var(--rust); padding: 4px 12px; font-size: clamp(.8rem, 2.4vw, 1.1rem); letter-spacing: .2em;
+           transform: rotate(-12deg) scale(2.2); opacity: 0; transition: transform .25s ease-in, opacity .25s; }
+  .hero.s2b .stamp { transform: rotate(-12deg) scale(1); opacity: .8; }
+
+  .titlecard { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; z-index: 3; padding: 18vh 16px 13vh;
+               background: linear-gradient(to bottom, rgba(5,4,4,0), rgba(5,4,4,.82) 55%); opacity: 0; transition: opacity 2.5s ease; }
+  .hero.s3 .titlecard { opacity: 1; }
+  @media (min-aspect-ratio: 1/1) {
+    .titlecard { padding: 12vh 16px 9vh; background: linear-gradient(to bottom, rgba(5,4,4,0), rgba(5,4,4,.7) 60%); }
+    .titlecard h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); }
+  }
+  .titlecard h1 { font-family: var(--title); font-weight: 700; margin: 0; color: #f4ecda;
+                  font-size: clamp(2.6rem, 11vw, 6rem); letter-spacing: .9em; opacity: 0;
+                  text-shadow: 0 0 30px rgba(143,227,240,.45);
+                  transition: letter-spacing 3.5s cubic-bezier(.2,.7,.2,1), opacity 3s ease; }
+  .hero.s3 .titlecard h1 { letter-spacing: .22em; opacity: 1; }
+  .titlecard p { font-family: var(--type); color: var(--muted); letter-spacing: .3em; margin: 8px 0 0;
+                 font-size: clamp(.75rem, 2.4vw, .95rem); opacity: 0; transition: opacity 2s ease 1.5s; }
+  .hero.s3 .titlecard p { opacity: 1; }
+
+  .controls { position: absolute; bottom: 3vh; left: 0; right: 0; display: flex; justify-content: center; gap: 12px; z-index: 4; }
+  .controls button, .controls a { font-family: var(--type); background: transparent; color: var(--amber); border: 1px solid rgba(224,164,74,.5);
+           padding: 6px 14px; letter-spacing: .15em; font-size: .8rem; cursor: pointer; text-decoration: none; border-radius: 2px; }
+  .controls button:hover, .controls a:hover { background: rgba(224,164,74,.12); }
+  #begin { opacity: 0; transition: opacity 1.5s; }
+  .hero.s4 #begin { opacity: 1; animation: nudge 2.4s ease-in-out infinite 1s; }
+  @keyframes nudge { 50% { transform: translateY(4px); } }
+
+  /* scene motion */
+  .lamp { transform-origin: 600px 0; animation: swing 7s ease-in-out infinite; }
+  @keyframes swing { 0%,100% { transform: rotate(4deg); } 50% { transform: rotate(-4deg); } }
+  .pulse { animation: pulse 4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  .rise { animation: rise 6s ease-in-out infinite; }
+  @keyframes rise { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .turn { animation: turn 16s linear infinite; }
+  @keyframes turn { from { transform: translateX(0); } to { transform: translateX(-120px); } }
+  .mote { animation: mote 7s linear infinite; }
+  @keyframes mote { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-260px); opacity: 0; } }
+  .breathe { animation: breathe 5s ease-in-out infinite; transform-origin: 405px 600px; }
+  @keyframes breathe { 0%,100% { transform: rotate(0); } 50% { transform: rotate(2.5deg); } }
+
+  /* ---------- STORY ---------- */
+  main { max-width: 720px; margin: 0 auto; padding: 72px 20px 40px; }
+  .chapter { font-family: var(--type); color: var(--amber); letter-spacing: .25em; font-size: .85rem;
+             margin: 64px 0 14px; display: flex; align-items: center; gap: 14px; }
+  .chapter::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  .chapter:first-child { margin-top: 0; }
+  main p { margin: 0 0 1.3em; }
+  main p.first::first-letter { font-family: var(--title); font-size: 3.6em; float: left; line-height: .9;
+                               padding: 6px 10px 0 0; color: var(--glow); }
+  em.voice { color: var(--voice); font-style: italic; }
+  .reveal { opacity: 0; transform: translateY(18px); filter: blur(3px);
+            transition: opacity 1.4s ease, transform 1.4s ease, filter 1.4s ease; }
+  .reveal.in { opacity: 1; transform: none; filter: none; }
+  .end { text-align: center; font-family: var(--type); color: var(--muted); letter-spacing: .3em; margin: 56px 0 0; font-size: .85rem; }
+
+  /* ---------- PERSONNEL FILES ---------- */
+  .files { max-width: 1000px; margin: 0 auto; padding: 24px 20px 80px; }
+  .files h2 { font-family: var(--type); color: var(--amber); letter-spacing: .25em; font-weight: normal; font-size: .95rem; text-align: center; margin: 0 0 28px; }
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
+  .file { background: var(--card); color: #2b2218; padding: 18px 20px 20px; border-radius: 2px; position: relative;
+          font-family: var(--type); font-size: .9rem; line-height: 1.55; box-shadow: var(--card-shadow); }
+  .file:nth-child(odd) { transform: rotate(-.6deg); } .file:nth-child(even) { transform: rotate(.5deg); }
+  .mug { float: right; width: 96px; margin: -4px -4px 8px 12px; background: #fbf8f0; padding: 4px 4px 14px;
+         box-shadow: 0 2px 6px rgba(0,0,0,.35); transform: rotate(2.5deg); position: relative; }
+  .mug::before { content: ""; position: absolute; top: -8px; left: 38px; width: 12px; height: 26px;
+                 border: 2px solid #8a8a8a; border-radius: 6px; }
+  .mug svg { display: block; width: 100%; height: auto; }
+  .file h3 { margin: 0 0 2px; font-size: 1.15rem; letter-spacing: .05em; }
+  .file .tag { display: inline-block; border: 2px solid var(--rust); color: var(--rust); padding: 0 6px; font-size: .75rem;
+               letter-spacing: .15em; margin-bottom: 8px; }
+  .file dl { margin: 0; } .file dt { color: #7a6a52; font-size: .75rem; letter-spacing: .12em; margin-top: 6px; } .file dd { margin: 0; }
+
+  footer { text-align: center; color: var(--muted); font-family: var(--type); font-size: .75rem; letter-spacing: .2em; padding: 0 16px 40px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lamp,.pulse,.rise,.turn,.mote,.breathe,#begin { animation: none !important; }
+    .reveal { opacity: 1; transform: none; filter: none; }
+  }
+
+  /* ---------- THEME TOGGLE ---------- */
+  .theme-toggle { position: fixed; top: 12px; right: 12px; z-index: 60; min-width: 76px; min-height: 40px;
+    font-family: var(--type); font-size: .8rem; letter-spacing: .15em; color: var(--amber); background: var(--btn-bg);
+    border: 1px solid var(--btn-line); border-radius: 2px; padding: 8px 14px; cursor: pointer;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .theme-toggle:hover { background: rgba(224,164,74,.18); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+  /* ---------- LIGHT MODE: aged paper dossier ---------- */
+  :root[data-theme="light"] {
+    --night:   #ece2cc;   /* page: warm cream paper */
+    --paper:   #2a2118;   /* ink */
+    --amber:   #87500f;   /* darkened amber, labels */
+    --rust:    #973320;
+    --glow:    #2c6a76;   /* drop cap: deep crystal teal */
+    --muted:   #6a5b45;
+    --voice:   #4a3a86;   /* muted indigo dialogue */
+    --rule:    rgba(135,80,15,.45);
+    --card:    #f5eedd;   /* file paper, a shade lighter than the page */
+    --card-shadow: 0 1px 2px rgba(60,40,20,.18), 0 6px 16px rgba(60,40,20,.22);
+    --grain:   .035;
+    --btn-bg:  rgba(245,238,221,.9);
+    --btn-line: rgba(135,80,15,.55);
+  }
+  /* the opening scene stays a night scene in both modes */
+  :root[data-theme="light"] .hero { --amber: #e0a44a; --rust: #a3402a; --muted: #9b8f7a; --paper: #e9dfc8; }
+  /* fade from the dark scene into the paper below it */
+  :root[data-theme="light"] body { background: linear-gradient(to bottom, #050404 0, #050404 max(100vh, 560px),
+      var(--night) calc(max(100vh, 560px) + 120px)) no-repeat, var(--night); }
+  :root[data-theme="light"] main { padding-top: 150px; }
+  :root[data-theme="light"] .theme-toggle:hover { background: #fffaf0; }
+  :root[data-theme="light"] footer { color: var(--muted); }
+</style>
+<script>
+  // Default is dark; remember a chosen theme if storage is available
+  try { if (localStorage.getItem('maiurth-theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+</script>
+</head>
+<body>
+<button type="button" class="theme-toggle" id="themeToggle">LIGHT</button>
+
+<!-- ===================== OPENING SCENE ===================== -->
+<section class="hero" id="hero" aria-label="Opening scene">
+  <div class="teletype" aria-hidden="true"><div id="t1"></div><div id="t2"></div></div>
+  <div class="stamp" aria-hidden="true">CLASSIFIED</div>
+
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="pitlight" cx="50%" cy="78%" r="55%">
+        <stop offset="0%" stop-color="#8fe3f0" stop-opacity=".75"/>
+        <stop offset="45%" stop-color="#3a7f8c" stop-opacity=".25"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="lampcone" cx="50%" cy="0%" r="100%">
+        <stop offset="0%" stop-color="#ffcf7a" stop-opacity=".35"/>
+        <stop offset="100%" stop-color="#ffcf7a" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="wall" x1="0" x2="1">
+        <stop offset="0" stop-color="#0a0908"/><stop offset=".5" stop-color="#1c1814"/><stop offset="1" stop-color="#0a0908"/>
+      </linearGradient>
+      <linearGradient id="facet" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffffff" stop-opacity=".5"/><stop offset="1" stop-color="#8fe3f0" stop-opacity=".15"/>
+      </linearGradient>
+      <clipPath id="globe"><circle cx="600" cy="505" r="38"/></clipPath>
+    </defs>
+
+    <!-- silo walls: concrete rings fading into the dark -->
+    <rect width="1200" height="800" fill="url(#wall)"/>
+    <g stroke="#2a241d" stroke-width="2" fill="none" opacity=".8">
+      <path d="M0 120 Q600 170 1200 120"/><path d="M0 250 Q600 300 1200 250"/><path d="M0 380 Q600 430 1200 380"/>
+    </g>
+    <g stroke="#2a241d" stroke-width="3"><line x1="160" y1="0" x2="200" y2="640"/><line x1="1040" y1="0" x2="1000" y2="640"/></g>
+
+    <!-- the pit's light -->
+    <rect class="pulse" width="1200" height="800" fill="url(#pitlight)"/>
+
+    <!-- swinging work lamp -->
+    <g class="lamp">
+      <line x1="600" y1="0" x2="600" y2="150" stroke="#3a332a" stroke-width="2"/>
+      <path d="M575 150 h50 l14 26 h-78z" fill="#2c271f"/>
+      <circle cx="600" cy="178" r="7" fill="#ffd894"/>
+      <path d="M560 178 L380 800 H820 L640 178 Z" fill="url(#lampcone)"/>
+    </g>
+
+    <!-- floor and pit mouth -->
+    <path d="M0 610 Q600 570 1200 610 V800 H0Z" fill="#14110d"/>
+    <ellipse cx="600" cy="640" rx="300" ry="62" fill="#020303"/>
+    <ellipse class="pulse" cx="600" cy="636" rx="290" ry="56" fill="none" stroke="#8fe3f0" stroke-opacity=".35" stroke-width="2"/>
+    <!-- guard rail -->
+    <g stroke="#4a4136" stroke-width="3" fill="none">
+      <path d="M300 612 Q600 548 900 612"/><path d="M300 640 Q600 578 900 640"/>
+      <line x1="330" y1="602" x2="330" y2="660"/><line x1="460" y1="582" x2="460" y2="640"/>
+      <line x1="740" y1="582" x2="740" y2="640"/><line x1="870" y1="602" x2="870" y2="660"/>
+    </g>
+
+    <!-- MAIURTH in its crystal, hovering over the pit -->
+    <g class="rise">
+      <polygon points="600,395 662,455 650,585 550,585 538,455" fill="url(#facet)" stroke="#8fe3f0" stroke-width="2.5"/>
+      <g stroke="#fff" stroke-opacity=".28" stroke-width="1.5" fill="none">
+        <polyline points="600,395 600,585"/><polyline points="538,455 600,478 662,455"/><polyline points="550,585 600,478 650,585"/>
+      </g>
+      <circle cx="600" cy="505" r="38" fill="#1f5e98"/>
+      <g clip-path="url(#globe)"><g class="turn" fill="#5aa65a">
+        <path d="M566 488 q14 -14 30 -3 q8 11 -5 19 q-16 6 -25 -16z"/><path d="M604 512 q16 -8 24 6 q-3 15 -19 13 q-10 -5 -5 -19z"/>
+        <path d="M626 482 q10 -5 15 5 q-5 8 -15 -5z"/><path d="M572 528 q8 -3 12 4 q-5 6 -12 -4z"/>
+        <path d="M686 488 q14 -14 30 -3 q8 11 -5 19 q-16 6 -25 -16z"/><path d="M724 512 q16 -8 24 6 q-3 15 -19 13 q-10 -5 -5 -19z"/>
+        <path d="M746 482 q10 -5 15 5 q-5 8 -15 -5z"/><path d="M692 528 q8 -3 12 4 q-5 6 -12 -4z"/>
+      </g></g>
+      <circle cx="600" cy="505" r="38" fill="none" stroke="#bff3fa" stroke-opacity=".5"/>
+      <ellipse cx="588" cy="490" rx="10" ry="6" fill="#fff" opacity=".25"/>
+    </g>
+
+    <!-- motes drifting up out of the pit -->
+    <g fill="#8fe3f0">
+      <circle class="mote" cx="470" cy="650" r="2.2"/><circle class="mote" cx="720" cy="655" r="2.6" style="animation-delay:2s"/>
+      <circle class="mote" cx="560" cy="660" r="1.8" style="animation-delay:3.6s"/><circle class="mote" cx="660" cy="648" r="2" style="animation-delay:5s"/>
+    </g>
+
+    <!-- Dr. Smoot, a silhouette at the rail, leaning to look down -->
+    <g class="breathe" fill="#060505">
+      <path d="M372 600 L380 492 Q405 462 430 492 L440 600 Z"/>          <!-- coat -->
+      <circle cx="410" cy="455" r="22"/>                                   <!-- head -->
+      <path d="M388 446 q8 -26 30 -18 q14 4 18 18 q-12 -10 -24 -8 q-14 2 -24 8z"/> <!-- hair -->
+      <path d="M425 500 Q470 515 492 552" stroke="#060505" stroke-width="13" stroke-linecap="round" fill="none"/> <!-- arm on rail -->
+      <rect x="383" y="598" width="14" height="26"/><rect x="415" y="598" width="14" height="26"/>
+    </g>
+    <!-- rim light on Smoot from the crystal -->
+    <path d="M430 492 L440 600" stroke="#8fe3f0" stroke-opacity=".5" stroke-width="2"/>
+    <circle cx="414" cy="455" r="22" fill="none" stroke="#8fe3f0" stroke-opacity=".35" stroke-width="2" stroke-dasharray="0 40 34 200"/>
+  </svg>
+
+  <div class="titlecard">
+    <h1>MAIURTH</h1>
+    <p>AN INTRODUCTION</p>
+  </div>
+
+  <div class="controls">
+    <a href="#story" id="begin">BEGIN ↓</a>
+    <button id="replay" type="button">REPLAY</button>
+    <button id="skip" type="button">SKIP</button>
+  </div>
+</section>
+
+<!-- ===================== STORY ===================== -->
+<main id="story">
+  <div class="chapter reveal">I. THE THESIS</div>
+  <p class="first reveal">In the spring of 1975, while every camera in America was pointed at the last helicopters lifting off the roof of the embassy in Saigon, nobody was watching a decommissioned missile silo forty miles outside Tonopah, Nevada. That was the point. Nine levels beneath the sagebrush, in a concrete shaft built to hold the end of the world, a man named Dr. Smoot was building a new one.</p>
+  <p class="reveal">Four years earlier, at forty-one, he had published a thesis with a title so dry it nearly hid what it said: <em>On the Compression of Living Matter and Its Transport to Designed Environments.</em> In plain words, a way to make a person small, impossibly small, and send them somewhere that did not exist until someone drew it. His committee called it brilliant and useless. A man in Washington read it twice and called it a weapon. Two men in gray suits came for Dr. Smoot on a Tuesday, and he has not seen daylight since. He does not think of himself as a prisoner, or a patriot, or a traitor. He thinks of himself as a man solving a problem, and he has learned that the less he says about which side he is on, the longer he is allowed to keep solving it.</p>
+
+  <div class="chapter reveal">II. THE MEN WHO KEEP HIM</div>
+  <p class="reveal">The program belongs to Giles Lane. He is enormous, a man who fills a doorway sideways, and when he is angry the rosacea climbs his cheeks like a brushfire. Lane believes in procedure the way other men believe in God. Every cruelty in the facility is typed, numbered, and signed in triplicate, and that, to Lane, is what makes it right. What the government wants from Dr. Smoot is simple enough to fit on one form: a prison no one can find, and a soldier no one can see.</p>
+  <p class="reveal">Experiments need subjects, and subjects are where Augustin Angelos comes in. He is a big Black man in his fifties, always in a pressed charcoal suit, with a voice like the lowest string of a cello, a resonant baritone that makes every room he enters go quiet. Angelos serves no flag. He supplies Lane with "volunteers": drifters, deserters, hitchhikers, people the country has stopped counting. Lane despises him and cannot run the program without him. Angelos, for his part, finds Lane amusing and fully intends to outlast him. <em class="voice">"Mr. Lane keeps the paperwork, Doctor,"</em> he told Smoot once, settling into a folding chair as if it were a throne. <em class="voice">"I keep the people. Ask yourself which of us is truly in charge."</em></p>
+
+  <div class="chapter reveal">III. MY EARTH</div>
+  <p class="reveal">At the bottom of the shaft is a pit, and suspended over the pit is a crystal the size of a man, glowing a cold, steady blue. Inside it turns a world no larger than a grapefruit: oceans, mountains, weather, a sky. Officially it is Test Environment Seven. Dr. Smoot, who has a scientist's weakness for bad puns, calls it MAIURTH. My Earth. He designed every coastline himself. Lane thinks it is a cage. Angelos thinks it is a market. Smoot has never told either of them what it really is, which is a door, and that one day he means to walk through it and not come back.</p>
+
+  <div class="chapter reveal">IV. THE HELLER BROTHERS</div>
+  <p class="reveal">The order to get Dr. Smoot out came from no office anyone would admit to, and it went to the Heller brothers. Billy Heller, Army Special Forces, a Green Beret who did everything by the book and never let you forget that he had read it. Ben Heller, Navy SEAL, who had never met a rule he couldn't talk his way around, or a silence he couldn't fill with a wisecrack. On a moonless night in March they cut through two fences and got within forty feet of Dr. Smoot. Then the alarms went, and Ben took a rifle round through the thigh. As Billy dragged his brother back toward the wire, Smoot pressed something through the chain link: a scrap of paper, folded twice. It said, in careful block capitals, <em>DON'T COME BACK FOR ME. COME BACK FOR THEM.</em></p>
+
+  <div class="chapter reveal">V. BETHESDA</div>
+  <p class="reveal">Three weeks later, Ben is learning to walk again at the Naval Hospital in Bethesda, Maryland, and losing every argument to the nurse in charge of him. Rebecca LeBree is twenty-seven, the only daughter of a Connecticut shipping fortune, and her father has bought her everything she ever asked for except the one thing she wanted, which was to earn something on her own. She works the special operations ward by day and studies for medical school at night, and she has patched up enough commandos to be unimpressed by any of them. <em class="voice">"You're healing nicely, Lieutenant,"</em> she tells Ben, <em class="voice">"which is a shame, because you're much quieter on morphine."</em> From the visitor's chair, Billy doesn't look up from his newspaper. <em class="voice">"I've been telling him that since 1952, ma'am. You're the first one he's listened to."</em></p>
+  <p class="reveal">The note sits folded on Ben's bedside table, between a paperback and a cup of cold coffee. Rebecca has read it, though she pretends she hasn't. Billy has read it a dozen times and wants to report it up the chain. Ben has already decided they are going back.</p>
+
+  <div class="chapter reveal">VI. THE PIT</div>
+  <p class="reveal">In Nevada, nine levels down, Dr. Smoot stands at the rail and looks into the light. Behind him, a chair creaks, and that low cello voice fills the shaft. <em class="voice">"It is a beautiful thing you have made, Doctor. A pity about the population."</em> Smoot does not turn around. <em class="voice">"There is no population."</em> In the dark, Augustin Angelos smiles. <em class="voice">"Not yet."</em></p>
+
+  <p class="end reveal">— END OF INTRODUCTION —</p>
+</main>
+
+<!-- ===================== PERSONNEL FILES ===================== -->
+<section class="files">
+  <h2 class="reveal">PERSONNEL FILES · PROJECT MAIURTH</h2>
+  <div class="grid">
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dr. Smoot: wild gray hair, round glasses, lab coat"><rect width="200" height="240" fill="#b9b3a3"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M14 240 Q16 182 100 172 Q184 182 186 240Z" fill="#ece8de"/>
+<path d="M70 178 L100 232 L130 178 Q100 186 70 178Z" fill="#6d5a3c"/>
+<path d="M86 172 L100 200 L114 172Z" fill="#f4f1ea"/><path d="M97 184 L103 184 L106 214 L100 222 L94 214Z" fill="#3c4a63"/>
+<path d="M70 178 L60 240 M130 178 L140 240" stroke="#c9c3b6" stroke-width="2"/>
+<rect x="88" y="138" width="24" height="38" fill="#e1b48f"/>
+<ellipse cx="63" cy="108" rx="6" ry="10" fill="#e1b48f"/><ellipse cx="137" cy="108" rx="6" ry="10" fill="#e1b48f"/>
+<ellipse cx="100" cy="104" rx="37" ry="45" fill="#e1b48f"/>
+<path d="M70 126 Q72 150 100 151 Q128 150 130 126 Q128 142 100 144 Q72 142 70 126Z" fill="#6b5f55" opacity=".35"/>
+<path d="M56 104 Q46 80 58 64 Q60 44 82 44 Q92 30 108 40 Q126 30 136 48 Q156 54 150 78 Q160 92 144 104 Q140 82 128 74 Q112 64 100 70 Q84 62 72 74 Q62 84 56 104Z" fill="#c7c4bd"/>
+<path d="M58 66 l-10 -6 l8 10 M144 60 l12 -8 l-6 12 M90 40 l-4 -10 l8 8 M150 84 l10 2 l-10 4" stroke="#c7c4bd" stroke-width="4" stroke-linecap="round" fill="none"/>
+<path d="M72 74 Q86 60 100 70 Q114 62 128 74" stroke="#a9a59d" stroke-width="2" fill="none"/>
+<ellipse cx="86" cy="105" rx="5.5" ry="3.6" fill="#fbf6ee"/><ellipse cx="114" cy="105" rx="5.5" ry="3.6" fill="#fbf6ee"/><circle cx="86" cy="105" r="3.2" fill="#1d1712"/><circle cx="114" cy="105" r="3.2" fill="#1d1712"/>
+<circle cx="86" cy="105" r="11" fill="none" stroke="#3a3530" stroke-width="2"/><circle cx="114" cy="105" r="11" fill="none" stroke="#3a3530" stroke-width="2"/>
+<path d="M97 104 Q100 101 103 104 M75 103 L64 100 M125 103 L136 100" stroke="#3a3530" stroke-width="2" fill="none"/>
+<path d="M76 89 Q86 84 96 90 M104 90 Q114 84 124 89" stroke="#8d8880" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M80 116 Q86 119 92 116 M108 116 Q114 119 120 116" stroke="#b88a68" stroke-width="1.5" fill="none"/>
+<path d="M100 108 L96 124 Q100 127 104 124" stroke="#b07e5c" stroke-width="2" fill="none"/>
+<path d="M90 135 Q100 133 110 135" stroke="#7a4a3a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+</svg></figure><span class="tag">DETAINED</span><h3>DR. SMOOT</h3>
+      <dl><dt>AGE</dt><dd>Mid-40s</dd><dt>ROLE</dt><dd>Author of the compression thesis. Held at the Tonopah facility and forced to run the project.</dd><dt>ALIGNMENT</dt><dd>True Neutral</dd></dl></div>
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Giles Lane: heavyset, flushed red cheeks, brown suit"><rect width="200" height="240" fill="#aaa38f"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M-10 240 Q-6 160 100 156 Q206 160 210 240Z" fill="#7a5a3a"/>
+<path d="M60 162 L100 240 L140 162 Q100 172 60 162Z" fill="#f2efe8"/>
+<path d="M92 170 L108 170 L114 226 L100 240 L86 226Z" fill="#7d2e2e"/>
+<path d="M60 162 L84 240 M140 162 L116 240" stroke="#5e4329" stroke-width="3"/>
+<rect x="68" y="130" width="64" height="40" fill="#efc3a6"/>
+<ellipse cx="52" cy="104" rx="7" ry="12" fill="#efc3a6"/><ellipse cx="148" cy="104" rx="7" ry="12" fill="#efc3a6"/>
+<ellipse cx="100" cy="100" rx="49" ry="50" fill="#efc3a6"/>
+<ellipse cx="100" cy="146" rx="42" ry="17" fill="#efc3a6"/>
+<path d="M66 144 Q100 166 134 144" stroke="#d29c80" stroke-width="2" fill="none"/>
+<ellipse cx="74" cy="118" rx="16" ry="11" fill="#d8504a" opacity=".55"/><ellipse cx="126" cy="118" rx="16" ry="11" fill="#d8504a" opacity=".55"/>
+<ellipse cx="100" cy="98" rx="30" ry="8" fill="#d8504a" opacity=".18"/>
+<path d="M52 92 Q54 54 100 50 Q146 54 148 92 Q140 70 112 66 Q90 64 72 72 Q58 80 52 92Z" fill="#4a3424"/>
+<path d="M70 70 Q100 60 140 76" stroke="#2f2117" stroke-width="1.5" fill="none"/>
+<rect x="48" y="90" width="8" height="22" rx="3" fill="#4a3424"/><rect x="144" y="90" width="8" height="22" rx="3" fill="#4a3424"/>
+<ellipse cx="86" cy="102" rx="4.5" ry="3" fill="#fbf6ee"/><ellipse cx="114" cy="102" rx="4.5" ry="3" fill="#fbf6ee"/>
+<circle cx="86" cy="102" r="2.4" fill="#1d1712"/><circle cx="114" cy="102" r="2.4" fill="#1d1712"/>
+<path d="M76 94 L95 97 M105 97 L124 94" stroke="#3a2618" stroke-width="4" stroke-linecap="round"/>
+<path d="M78 108 Q86 111 94 108 M106 108 Q114 111 122 108" stroke="#c98d72" stroke-width="1.5" fill="none"/>
+<ellipse cx="100" cy="118" rx="9" ry="7" fill="#e07a6c"/>
+<path d="M90 134 Q100 130 110 134 Q100 137 90 134Z" fill="#9a4a42"/>
+</svg></figure><span class="tag">PROGRAM DIRECTOR</span><h3>GILES LANE</h3>
+      <dl><dt>AGE</dt><dd>30s</dd><dt>ROLE</dt><dd>Runs the program by the book and signs every cruelty in triplicate.</dd><dt>ALIGNMENT</dt><dd>Lawful Evil</dd></dl></div>
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Augustin Angelos: charcoal three-piece suit, graying beard"><rect width="200" height="240" fill="#9c9483"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M2 240 Q4 166 100 160 Q196 166 198 240Z" fill="#38383c"/>
+<path d="M66 166 L100 236 L134 166 Q100 176 66 166Z" fill="#4a4a50"/>
+<path d="M80 168 L100 210 L120 168Z" fill="#f2efe8"/>
+<path d="M95 176 L105 176 L109 210 L100 222 L91 210Z" fill="#6e1f2b"/>
+<path d="M66 166 L88 240 M134 166 L112 240" stroke="#26262a" stroke-width="3"/>
+<path d="M150 200 l14 -4 l2 8 l-14 3Z" fill="#c9a24a"/>
+<rect x="78" y="132" width="44" height="38" fill="#5b3a27"/>
+<ellipse cx="59" cy="104" rx="7" ry="11" fill="#5b3a27"/><ellipse cx="141" cy="104" rx="7" ry="11" fill="#5b3a27"/>
+<path d="M60 96 Q60 54 100 52 Q140 54 140 96 L138 124 Q130 152 100 154 Q70 152 62 124Z" fill="#5b3a27"/>
+<path d="M60 92 Q60 54 100 52 Q140 54 140 92 Q136 70 118 64 Q100 60 82 64 Q64 70 60 92Z" fill="#2e2622"/>
+<path d="M60 92 Q61 80 66 72 M140 92 Q139 80 134 72" stroke="#8d8781" stroke-width="5" fill="none"/>
+<ellipse cx="85" cy="102" rx="5.5" ry="3.6" fill="#fbf6ee"/><ellipse cx="115" cy="102" rx="5.5" ry="3.6" fill="#fbf6ee"/><circle cx="85" cy="102" r="3" fill="#120c08"/><circle cx="115" cy="102" r="3" fill="#120c08"/>
+<path d="M77 99 Q85 96 92 99 M108 99 Q115 96 123 99" stroke="#120c08" stroke-width="1.5" fill="none" opacity=".6"/>
+<path d="M76 92 Q85 88 94 92 M106 92 Q115 88 124 92" stroke="#1a1310" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M100 104 L95 120 Q100 124 106 120" stroke="#3a2418" stroke-width="2" fill="none"/>
+<ellipse cx="100" cy="122" rx="11" ry="5" fill="#4a2e1f"/>
+<path d="M64 120 Q66 150 100 156 Q134 150 136 120 Q132 140 116 140 Q100 136 84 140 Q68 140 64 120Z" fill="#7d7873"/>
+<path d="M84 128 Q100 122 116 128 Q108 131 100 130 Q92 131 84 128Z" fill="#7d7873"/>
+<path d="M88 135 Q100 140 114 133" stroke="#2b1a12" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+</svg></figure><span class="tag">CONTRACTOR</span><h3>AUGUSTIN ANGELOS</h3>
+      <dl><dt>AGE</dt><dd>50s</dd><dt>ROLE</dt><dd>Eloquent, with a cello-deep baritone. Supplies the project's "volunteers" and plans to outlast Lane.</dd><dt>ALIGNMENT</dt><dd>Neutral Evil</dd></dl></div>
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Billy Heller: green beret, square jaw, smirk"><rect width="200" height="240" fill="#aaa48f"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M10 240 Q12 176 100 168 Q188 176 190 240Z" fill="#535e38"/>
+<path d="M76 172 L100 196 L124 172 L132 186 L100 206 L68 186Z" fill="#46502f"/>
+<path d="M148 196 h22 v20 h-22Z" fill="#3c4528"/><path d="M152 200 h14 v4 h-14Z" fill="#c8a432"/>
+<rect x="84" y="138" width="32" height="36" fill="#d6a47c"/>
+<ellipse cx="63" cy="106" rx="6" ry="10" fill="#d6a47c"/><ellipse cx="137" cy="106" rx="6" ry="10" fill="#d6a47c"/>
+<path d="M64 92 Q64 64 100 62 Q136 64 136 92 L135 126 Q128 150 100 152 Q72 150 65 126Z" fill="#d6a47c"/>
+<path d="M64 98 L64 84 L70 84 L70 100Z M136 98 L136 84 L130 84 L130 100Z" fill="#5a3e28"/>
+<path d="M56 88 Q56 48 104 46 Q152 46 160 70 Q160 84 138 84 L60 92Z" fill="#2f4a2a"/>
+<path d="M58 88 L138 82" stroke="#1d2f1a" stroke-width="5" stroke-linecap="round"/>
+<path d="M70 62 l14 -2 l3 14 l-8 6 l-8 -6Z" fill="#c8a432"/><circle cx="78" cy="70" r="2.5" fill="#7a1f1f"/>
+<ellipse cx="86" cy="106" rx="5.5" ry="3.6" fill="#fbf6ee"/><ellipse cx="114" cy="106" rx="5.5" ry="3.6" fill="#fbf6ee"/><circle cx="86" cy="106" r="3" fill="#1d1712"/><circle cx="114" cy="106" r="3" fill="#1d1712"/>
+<path d="M74 97 Q84 93 94 98" stroke="#4a3220" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M106 96 Q116 88 126 94" stroke="#4a3220" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M100 108 L96 124 Q100 127 104 124" stroke="#a87652" stroke-width="2" fill="none"/>
+<path d="M88 137 Q100 139 114 132" stroke="#6e3a2a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+<path d="M76 140 Q100 154 124 140" stroke="#b4855f" stroke-width="1.5" fill="none"/>
+</svg></figure><span class="tag">U.S. ARMY SF</span><h3>BILLY HELLER</h3>
+      <dl><dt>AGE</dt><dd>Early 30s</dd><dt>ROLE</dt><dd>Green Beret. Led the rescue attempt. By the book, quick-witted, and condescending about it.</dd><dt>ALIGNMENT</dt><dd>Lawful Neutral</dd></dl></div>
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ben Heller: shaggy hair, mustache, big grin, navy sweater and dog tags"><rect width="200" height="240" fill="#b0a995"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M12 240 Q14 178 100 170 Q186 178 188 240Z" fill="#2c3a55"/>
+<path d="M78 174 Q100 190 122 174" stroke="#1f2a40" stroke-width="6" fill="none"/>
+<path d="M84 176 Q100 214 116 176" stroke="#b9b9b9" stroke-width="1.5" fill="none"/>
+<rect x="94" y="208" width="10" height="15" rx="2" fill="#cfcfcf" transform="rotate(-8 99 215)"/><rect x="100" y="210" width="10" height="15" rx="2" fill="#bdbdbd" transform="rotate(10 105 217)"/>
+<rect x="86" y="138" width="28" height="38" fill="#e0ae86"/>
+<path d="M50 120 Q44 70 70 52 Q100 36 132 52 Q158 70 150 120 Q152 136 140 142 Q100 132 60 142 Q48 136 50 120Z" fill="#9a6b3a"/>
+<ellipse cx="100" cy="104" rx="37" ry="45" fill="#e0ae86"/>
+<path d="M62 96 Q60 56 100 54 Q142 56 140 96 Q132 70 112 72 Q96 60 80 76 Q70 72 62 96Z" fill="#9a6b3a"/>
+<path d="M62 96 Q58 116 64 130 L66 100Z M140 96 Q144 116 136 130 L134 100Z" fill="#9a6b3a"/>
+<path d="M80 76 Q90 72 98 80 M112 72 Q122 72 128 82" stroke="#7a5230" stroke-width="2" fill="none"/>
+<path d="M80 106 Q86 101 92 106" stroke="#1d1712" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M108 106 Q114 101 120 106" stroke="#1d1712" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M76 94 Q85 89 94 94 M106 94 Q115 89 124 94" stroke="#7a5230" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+<path d="M100 108 L96 122 Q100 125 104 122" stroke="#ad7b55" stroke-width="2" fill="none"/>
+<path d="M82 132 Q100 152 118 132Z" fill="#fbf6ee" stroke="#6e3a2a" stroke-width="2" stroke-linejoin="round"/>
+<path d="M78 130 Q88 120 100 126 Q112 120 122 130 Q112 128 100 131 Q88 128 78 130Z" fill="#7a5230"/>
+<path d="M72 120 Q74 124 78 124 M128 120 Q126 124 122 124" stroke="#c48d65" stroke-width="1.5" fill="none"/>
+</svg></figure><span class="tag">U.S. NAVY SEAL</span><h3>BEN HELLER</h3>
+      <dl><dt>AGE</dt><dd>Late 20s</dd><dt>ROLE</dt><dd>Billy's younger brother. Took a rifle round to the thigh during the rescue. Born smart-ass.</dd><dt>ALIGNMENT</dt><dd>Chaotic Good</dd></dl></div>
+    <div class="file reveal"><figure class="mug"><svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rebecca LeBree: feathered blonde hair, nurse's cap, pearl earrings"><rect width="200" height="240" fill="#bdb6a2"/><g stroke="#00000014" stroke-width="1"><line x1="0" y1="60" x2="200" y2="60"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="180" x2="200" y2="180"/></g>
+<path d="M44 150 Q34 90 56 60 Q100 26 144 60 Q166 90 156 150 Q150 176 130 182 L70 182 Q50 176 44 150Z" fill="#d6b066"/>
+<path d="M16 240 Q18 180 100 172 Q182 180 184 240Z" fill="#f6f4ee"/>
+<path d="M80 174 L100 194 L120 174 L126 186 L100 204 L74 186Z" fill="#e6e3da"/>
+<circle cx="146" cy="206" r="5" fill="#c9a24a"/>
+<rect x="89" y="138" width="22" height="38" fill="#f1cbae"/>
+<path d="M65 100 Q65 58 100 58 Q135 58 135 100 Q134 134 116 146 Q100 154 84 146 Q66 134 65 100Z" fill="#f1cbae"/>
+<path d="M64 104 Q60 66 100 62 Q140 66 136 104 Q130 82 112 78 Q118 70 100 70 Q90 76 78 78 Q66 86 64 104Z" fill="#d6b066"/>
+<path d="M64 104 Q52 120 58 146 Q66 128 70 112Z M136 104 Q148 120 142 146 Q134 128 130 112Z" fill="#c9a256"/>
+<path d="M72 84 Q86 74 100 78 M128 84 Q114 74 104 78" stroke="#b58c42" stroke-width="2" fill="none"/>
+<path d="M70 62 L76 42 L124 42 L130 62 Q100 54 70 62Z" fill="#fbfbf8" stroke="#d9d6cc"/>
+<rect x="77" y="47" width="46" height="5" fill="#2a2a2a"/>
+<circle cx="66" cy="120" r="3.5" fill="#fffdf6" stroke="#cfcab9"/><circle cx="134" cy="120" r="3.5" fill="#fffdf6" stroke="#cfcab9"/>
+<ellipse cx="86" cy="104" rx="5.5" ry="3.6" fill="#fbf6ee"/><ellipse cx="114" cy="104" rx="5.5" ry="3.6" fill="#fbf6ee"/><circle cx="86" cy="104" r="3.2" fill="#3b5d7a"/><circle cx="114" cy="104" r="3.2" fill="#3b5d7a"/>
+<path d="M80 101 Q86 97 92 101 M108 101 Q114 97 120 101" stroke="#2a1d16" stroke-width="2" fill="none"/>
+<path d="M78 92 Q86 88 94 92 M106 92 Q114 88 122 92" stroke="#a8823e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+<path d="M100 108 L97 120 Q100 122 103 120" stroke="#cf9a7e" stroke-width="1.8" fill="none"/>
+<ellipse cx="80" cy="118" rx="8" ry="5" fill="#e88f8f" opacity=".3"/><ellipse cx="120" cy="118" rx="8" ry="5" fill="#e88f8f" opacity=".3"/>
+<path d="M90 131 Q100 127 110 131 Q100 138 90 131Z" fill="#b8505a"/>
+</svg></figure><span class="tag">NAVAL HOSPITAL</span><h3>REBECCA LeBREE</h3>
+      <dl><dt>AGE</dt><dd>27</dd><dt>ROLE</dt><dd>Special operations ward nurse, studying to become a doctor. Heiress who wants to earn her own way.</dd><dt>ALIGNMENT</dt><dd>Neutral Good</dd></dl></div>
+  </div>
+</section>
+
+<footer>MAIURTH © BILL · DEMO PAGE</footer>
+
+<script>
+  var hero = document.getElementById('hero');
+  var timers = [];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function type(el, text, start, speed) {
+    for (var i = 0; i <= text.length; i++) {
+      (function (n) {
+        timers.push(setTimeout(function () {
+          el.innerHTML = text.slice(0, n) + (n < text.length ? '<span class="cursor">▌</span>' : '');
+        }, start + n * speed));
+      })(i);
+    }
+    return start + text.length * speed;
+  }
+
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    hero.className = 'hero';
+    var t1 = document.getElementById('t1'), t2 = document.getElementById('t2');
+    t1.textContent = ''; t2.textContent = '';
+    if (reduce) { t1.textContent = 'TONOPAH, NEVADA · APRIL 1975'; t2.textContent = 'FACILITY LEVEL 9 · RESTRICTED'; hero.className = 'hero s2 s2b s3 s4'; return; }
+    var end1 = type(t1, 'TONOPAH, NEVADA · APRIL 1975', 400, 55);
+    var end2 = type(t2, 'FACILITY LEVEL 9 · RESTRICTED', end1 + 400, 55);
+    timers.push(setTimeout(function () { hero.classList.add('s2'); }, end2 + 300));   // scene fades up
+    timers.push(setTimeout(function () { hero.classList.add('s2b'); }, end2 + 1600)); // CLASSIFIED stamp
+    timers.push(setTimeout(function () { hero.classList.add('s3'); }, end2 + 3000));  // title draws together
+    timers.push(setTimeout(function () { hero.classList.add('s4'); }, end2 + 6500));  // "Begin" appears
+  }
+  function skip() {
+    timers.forEach(clearTimeout); timers = [];
+    document.getElementById('t1').textContent = 'TONOPAH, NEVADA · APRIL 1975';
+    document.getElementById('t2').textContent = 'FACILITY LEVEL 9 · RESTRICTED';
+    hero.className = 'hero s2 s2b s3 s4';
+  }
+  document.getElementById('replay').onclick = play;
+  document.getElementById('skip').onclick = skip;
+  play();
+
+  // On a tall, narrow phone screen, frame the scene closer so Dr. Smoot stays in view
+  var svg = hero.querySelector('svg');
+  function frame() {
+    if (window.innerWidth / window.innerHeight < 0.8) { svg.setAttribute('viewBox', '340 140 520 660'); svg.setAttribute('preserveAspectRatio', 'xMidYMid meet'); }
+    else { svg.setAttribute('viewBox', '0 0 1200 800'); svg.setAttribute('preserveAspectRatio', 'xMidYMid slice'); }
+  }
+  frame(); window.addEventListener('resize', frame);
+
+  // Story paragraphs fade into view as you scroll to them
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    items.forEach(function (el) { io.observe(el); });
+  } else { items.forEach(function (el) { el.classList.add('in'); }); }
+
+  // Light / dark toggle
+  var themeBtn = document.getElementById('themeToggle');
+  function syncThemeBtn() {
+    var light = document.documentElement.getAttribute('data-theme') === 'light';
+    themeBtn.textContent = light ? 'DARK' : 'LIGHT';
+    themeBtn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+  themeBtn.onclick = function () {
+    var light = document.documentElement.getAttribute('data-theme') !== 'light';
+    if (light) document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    try { localStorage.setItem('maiurth-theme', light ? 'light' : 'dark'); } catch (e) {}
+    syncThemeBtn();
+  };
+  syncThemeBtn();
+</script>
+</body>
+</html>
